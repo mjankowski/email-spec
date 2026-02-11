@@ -1,11 +1,11 @@
-require 'singleton'
+require "singleton"
 
 module EmailSpec
   class AddressConverter
     include Singleton
-  
+
     attr_accessor :converter
-  
+
     # The block provided to conversion should convert to an email
     # address string or return the input untouched. For example:
     #
@@ -16,11 +16,11 @@ module EmailSpec
     #     input
     #   end
     #  end
-    #    
+    #
     def conversion(&block)
       self.converter = block
     end
-  
+
     def convert(input)
       return input unless converter
       converter.call(input)

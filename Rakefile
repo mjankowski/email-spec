@@ -1,9 +1,9 @@
-require 'rubygems'
-require 'bundler'
+require "rubygems"
+require "bundler"
 Bundler::GemHelper.install_tasks
 
 begin
-  require 'cucumber/rake/task'
+  require "cucumber/rake/task"
   Cucumber::Rake::Task.new(:features)
 rescue LoadError
   task :features do
@@ -11,7 +11,7 @@ rescue LoadError
   end
 end
 
-require 'rspec/core/rake_task'
+require "rspec/core/rake_task"
 RSpec::Core::RakeTask.new
 
-task :default => [:features, :spec]
+task default: [:features, :spec]

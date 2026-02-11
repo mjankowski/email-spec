@@ -5,8 +5,8 @@
 # instead of editing this one. Cucumber will automatically load all features/**/*.rb
 # files.
 
-require 'uri'
-require 'cgi'
+require "uri"
+require "cgi"
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths"))
 
 module WithinHelpers
@@ -16,35 +16,35 @@ module WithinHelpers
 end
 World(WithinHelpers)
 
-Given /^(?:|I )am on (.+)$/ do |page_name|
+Given(/^(?:|I )am on (.+)$/) do |page_name|
   visit path_to(page_name)
 end
 
-When /^(?:|I )go to (.+)$/ do |page_name|
+When(/^(?:|I )go to (.+)$/) do |page_name|
   visit path_to(page_name)
 end
 
-When /^(?:|I )press "([^\"]*)"(?: within "([^\"]*)")?$/ do |button, selector|
+When(/^(?:|I )press "([^"]*)"(?: within "([^"]*)")?$/) do |button, selector|
   with_scope(selector) do
     click_button(button)
   end
 end
 
-When /^(?:|I )follow "([^\"]*)"(?: within "([^\"]*)")?$/ do |link, selector|
+When(/^(?:|I )follow "([^"]*)"(?: within "([^"]*)")?$/) do |link, selector|
   with_scope(selector) do
     click_link(link)
   end
 end
 
-When /^(?:|I )fill in "([^\"]*)" with "([^\"]*)"(?: within "([^\"]*)")?$/ do |field, value, selector|
+When(/^(?:|I )fill in "([^"]*)" with "([^"]*)"(?: within "([^"]*)")?$/) do |field, value, selector|
   with_scope(selector) do
-    fill_in(field, :with => value)
+    fill_in(field, with: value)
   end
 end
 
-When /^(?:|I )fill in "([^\"]*)" for "([^\"]*)"(?: within "([^\"]*)")?$/ do |value, field, selector|
+When(/^(?:|I )fill in "([^"]*)" for "([^"]*)"(?: within "([^"]*)")?$/) do |value, field, selector|
   with_scope(selector) do
-    fill_in(field, :with => value)
+    fill_in(field, with: value)
   end
 end
 
@@ -59,54 +59,54 @@ end
 # TODO: Add support for checkbox, select og option
 # based on naming conventions.
 #
-When /^(?:|I )fill in the following(?: within "([^\"]*)")?:$/ do |selector, fields|
+When(/^(?:|I )fill in the following(?: within "([^"]*)")?:$/) do |selector, fields|
   with_scope(selector) do
     fields.rows_hash.each do |name, value|
-      When %{I fill in "#{name}" with "#{value}"}
+      When %(I fill in "#{name}" with "#{value}")
     end
   end
 end
 
-When /^(?:|I )select "([^\"]*)" from "([^\"]*)"(?: within "([^\"]*)")?$/ do |value, field, selector|
+When(/^(?:|I )select "([^"]*)" from "([^"]*)"(?: within "([^"]*)")?$/) do |value, field, selector|
   with_scope(selector) do
-    select(value, :from => field)
+    select(value, from: field)
   end
 end
 
-When /^(?:|I )check "([^\"]*)"(?: within "([^\"]*)")?$/ do |field, selector|
+When(/^(?:|I )check "([^"]*)"(?: within "([^"]*)")?$/) do |field, selector|
   with_scope(selector) do
     check(field)
   end
 end
 
-When /^(?:|I )uncheck "([^\"]*)"(?: within "([^\"]*)")?$/ do |field, selector|
+When(/^(?:|I )uncheck "([^"]*)"(?: within "([^"]*)")?$/) do |field, selector|
   with_scope(selector) do
     uncheck(field)
   end
 end
 
-When /^(?:|I )choose "([^\"]*)"(?: within "([^\"]*)")?$/ do |field, selector|
+When(/^(?:|I )choose "([^"]*)"(?: within "([^"]*)")?$/) do |field, selector|
   with_scope(selector) do
     choose(field)
   end
 end
 
-When /^(?:|I )attach the file "([^\"]*)" to "([^\"]*)"(?: within "([^\"]*)")?$/ do |path, field, selector|
+When(/^(?:|I )attach the file "([^"]*)" to "([^"]*)"(?: within "([^"]*)")?$/) do |path, field, selector|
   with_scope(selector) do
     attach_file(field, path)
   end
 end
 
-Then /^(?:|I )should see JSON:$/ do |expected_json|
-  require 'json'
+Then(/^(?:|I )should see JSON:$/) do |expected_json|
+  require "json"
   expected = JSON.pretty_generate(JSON.parse(expected_json))
-  actual   = JSON.pretty_generate(JSON.parse(response.body))
+  actual = JSON.pretty_generate(JSON.parse(response.body))
   expect(expected).to eql actual
 end
 
-Then /^(?:|I )should see "([^\"]*)"(?: within "([^\"]*)")?$/ do |text, selector|
+Then(/^(?:|I )should see "([^"]*)"(?: within "([^"]*)")?$/) do |text, selector|
   with_scope(selector) do
-    if self.respond_to? :expect
+    if respond_to? :expect
       expect(page).to have_content(text)
     else
       assert page.has_content?(text)
@@ -114,20 +114,20 @@ Then /^(?:|I )should see "([^\"]*)"(?: within "([^\"]*)")?$/ do |text, selector|
   end
 end
 
-Then /^(?:|I )should see \/([^\/]*)\/(?: within "([^\"]*)")?$/ do |regexp, selector|
+Then(/^(?:|I )should see \/([^\/]*)\/(?: within "([^"]*)")?$/) do |regexp, selector|
   regexp = Regexp.new(regexp)
   with_scope(selector) do
-    if self.respond_to? :expect
-      expect(page).to have_xpath('//*', :text => regexp)
+    if respond_to? :expect
+      expect(page).to have_xpath("//*", text: regexp)
     else
-      assert page.has_xpath?('//*', :text => regexp)
+      assert page.has_xpath?("//*", text: regexp)
     end
   end
 end
 
-Then /^(?:|I )should not see "([^\"]*)"(?: within "([^\"]*)")?$/ do |text, selector|
+Then(/^(?:|I )should not see "([^"]*)"(?: within "([^"]*)")?$/) do |text, selector|
   with_scope(selector) do
-    if self.respond_to? :expect
+    if respond_to? :expect
       expect(page).to have_no_content(text)
     else
       assert page.has_no_content?(text)
@@ -135,85 +135,85 @@ Then /^(?:|I )should not see "([^\"]*)"(?: within "([^\"]*)")?$/ do |text, selec
   end
 end
 
-Then /^(?:|I )should not see \/([^\/]*)\/(?: within "([^\"]*)")?$/ do |regexp, selector|
+Then(/^(?:|I )should not see \/([^\/]*)\/(?: within "([^"]*)")?$/) do |regexp, selector|
   regexp = Regexp.new(regexp)
   with_scope(selector) do
-    if self.respond_to? :expect
-      expect(page).to have_no_xpath('//*', :text => regexp)
+    if respond_to? :expect
+      expect(page).to have_no_xpath("//*", text: regexp)
     else
-      assert page.has_no_xpath?('//*', :text => regexp)
+      assert page.has_no_xpath?("//*", text: regexp)
     end
   end
 end
 
-Then /^the "([^\"]*)" field(?: within "([^\"]*)")? should contain "([^\"]*)"$/ do |field, selector, value|
+Then(/^the "([^"]*)" field(?: within "([^"]*)")? should contain "([^"]*)"$/) do |field, selector, value|
   with_scope(selector) do
     field = find_field(field)
-    field_value = (field.tag_name == 'textarea') ? field.text : field.value
-    if self.respond_to? :expect
-      expect(field_value).to match /#{value}/
+    field_value = (field.tag_name == "textarea") ? field.text : field.value
+    if respond_to? :expect
+      expect(field_value).to match(/#{value}/)
     else
       assert_match(/#{value}/, field_value)
     end
   end
 end
 
-Then /^the "([^\"]*)" field(?: within "([^\"]*)")? should not contain "([^\"]*)"$/ do |field, selector, value|
+Then(/^the "([^"]*)" field(?: within "([^"]*)")? should not contain "([^"]*)"$/) do |field, selector, value|
   with_scope(selector) do
     field = find_field(field)
-    field_value = (field.tag_name == 'textarea') ? field.text : field.value
-    if self.respond_to? :expect
-      expect(field_value).to_not match /#{value}/
+    field_value = (field.tag_name == "textarea") ? field.text : field.value
+    if respond_to? :expect
+      expect(field_value).to_not match(/#{value}/)
     else
       assert_no_match(/#{value}/, field_value)
     end
   end
 end
 
-Then /^the "([^\"]*)" checkbox(?: within "([^\"]*)")? should be checked$/ do |label, selector|
+Then(/^the "([^"]*)" checkbox(?: within "([^"]*)")? should be checked$/) do |label, selector|
   with_scope(selector) do
-    field_checked = find_field(label)['checked']
-    if self.respond_to? :expect
-      epect(field_checked).to eql 'checked'
+    field_checked = find_field(label)["checked"]
+    if respond_to? :expect
+      epect(field_checked).to eql "checked"
     else
-      assert_equal 'checked', field_checked
+      assert_equal "checked", field_checked
     end
   end
 end
 
-Then /^the "([^\"]*)" checkbox(?: within "([^\"]*)")? should not be checked$/ do |label, selector|
+Then(/^the "([^"]*)" checkbox(?: within "([^"]*)")? should not be checked$/) do |label, selector|
   with_scope(selector) do
-    field_checked = find_field(label)['checked']
-    if self.respond_to? :expect
-      expect(field_checked).to_not eql 'checked'
+    field_checked = find_field(label)["checked"]
+    if respond_to? :expect
+      expect(field_checked).to_not eql "checked"
     else
-      assert_not_equal 'checked', field_checked
+      assert_not_equal "checked", field_checked
     end
   end
 end
 
-Then /^(?:|I )should be on (.+)$/ do |page_name|
+Then(/^(?:|I )should be on (.+)$/) do |page_name|
   current_path = URI.parse(current_url).path
-  if self.respond_to? :expect
+  if respond_to? :expect
     expect(current_path).to eql path_to(page_name)
   else
     assert_equal path_to(page_name), current_path
   end
 end
 
-Then /^(?:|I )should have the following query string:$/ do |expected_pairs|
+Then(/^(?:|I )should have the following query string:$/) do |expected_pairs|
   query = URI.parse(current_url).query
   actual_params = query ? CGI.parse(query) : {}
   expected_params = {}
-  expected_pairs.rows_hash.each_pair{|k,v| expected_params[k] = v.split(',')}
+  expected_pairs.rows_hash.each_pair { |k, v| expected_params[k] = v.split(",") }
 
-  if self.respond_to? :expect
+  if respond_to? :expect
     expect(actual_params).to eql expected_params
   else
     assert_equal expected_params, actual_params
   end
 end
 
-Then /^show me the page$/ do
+Then(/^show me the page$/) do
   save_and_open_page
 end

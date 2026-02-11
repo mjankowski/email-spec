@@ -1,4 +1,4 @@
-require_relative 'extractors'
+require_relative "extractors"
 
 module EmailSpec
   module Matchers
@@ -35,19 +35,19 @@ module EmailSpec
       def failure_message_when_negated
         "expected #{@email.inspect} not to deliver to #{@expected_reply_to.address.inspect}, but it did"
       end
-      alias negative_failure_message failure_message_when_negated
+      alias_method :negative_failure_message, :failure_message_when_negated
     end
 
     def reply_to(email)
       ReplyTo.new(email)
     end
 
-    alias :have_reply_to :reply_to
+    alias_method :have_reply_to, :reply_to
 
     class DeliverTo < EmailMatcher
       def initialize(expected_email_addresses_or_objects_that_respond_to_email)
         emails = expected_email_addresses_or_objects_that_respond_to_email.map do |email_or_object|
-          email_or_object.kind_of?(String) ? email_or_object : email_or_object.email
+          email_or_object.is_a?(String) ? email_or_object : email_or_object.email
         end
 
         @expected_recipients = Mail::ToField.new(emails).addrs.map(&:to_s).sort
@@ -60,7 +60,7 @@ module EmailSpec
       def matches?(email)
         @email = email
         recipients = email.header[:to] || email.header[:bcc]
-        @actual_recipients = address_array{ recipients  && recipients.addrs }.map(&:to_s).sort
+        @actual_recipients = address_array { recipients && recipients.addrs }.map(&:to_s).sort
         @actual_recipients == @expected_recipients
       end
 
@@ -71,17 +71,16 @@ module EmailSpec
       def failure_message_when_negated
         "expected #{@email.inspect} not to deliver to #{@expected_recipients.inspect}, but it did"
       end
-      alias negative_failure_message failure_message_when_negated
+      alias_method :negative_failure_message, :failure_message_when_negated
     end
 
     def deliver_to(*expected_email_addresses_or_objects_that_respond_to_email)
       DeliverTo.new(expected_email_addresses_or_objects_that_respond_to_email.flatten)
     end
 
-    alias :be_delivered_to :deliver_to
+    alias_method :be_delivered_to, :deliver_to
 
     class DeliverFrom < EmailMatcher
-
       def initialize(email)
         @expected_sender = Mail::FromField.new(email).addrs.first
       end
@@ -92,33 +91,32 @@ module EmailSpec
 
       def matches?(email)
         @email = email
-        @actual_sender = address_array{ email.header[:from].addrs }.first
+        @actual_sender = address_array { email.header[:from].addrs }.first
 
         !@actual_sender.nil? &&
           @actual_sender.to_s == @expected_sender.to_s
       end
 
       def failure_message
-        %(expected #{@email.inspect} to deliver from "#{@expected_sender.to_s}", but it delivered from "#{@actual_sender.to_s}")
+        %(expected #{@email.inspect} to deliver from "#{@expected_sender}", but it delivered from "#{@actual_sender}")
       end
 
       def failure_message_when_negated
-        %(expected #{@email.inspect} not to deliver from "#{@expected_sender.to_s}", but it did)
+        %(expected #{@email.inspect} not to deliver from "#{@expected_sender}", but it did)
       end
-      alias negative_failure_message failure_message_when_negated
+      alias_method :negative_failure_message, :failure_message_when_negated
     end
 
     def deliver_from(email)
       DeliverFrom.new(email)
     end
 
-    alias :be_delivered_from :deliver_from
+    alias_method :be_delivered_from, :deliver_from
 
     class BccTo < EmailMatcher
-
       def initialize(expected_email_addresses_or_objects_that_respond_to_email)
         emails = expected_email_addresses_or_objects_that_respond_to_email.map do |email_or_object|
-          email_or_object.kind_of?(String) ? email_or_object : email_or_object.email
+          email_or_object.is_a?(String) ? email_or_object : email_or_object.email
         end
 
         @expected_email_addresses = emails.sort
@@ -141,7 +139,7 @@ module EmailSpec
       def failure_message_when_negated
         "expected #{@email.inspect} not to bcc to #{@expected_email_addresses.inspect}, but it did"
       end
-      alias negative_failure_message failure_message_when_negated
+      alias_method :negative_failure_message, :failure_message_when_negated
     end
 
     def bcc_to(*expected_email_addresses_or_objects_that_respond_to_email)
@@ -149,10 +147,9 @@ module EmailSpec
     end
 
     class CcTo < EmailMatcher
-
       def initialize(expected_email_addresses_or_objects_that_respond_to_email)
         emails = expected_email_addresses_or_objects_that_respond_to_email.map do |email_or_object|
-          email_or_object.kind_of?(String) ? email_or_object : email_or_object.email
+          email_or_object.is_a?(String) ? email_or_object : email_or_object.email
         end
 
         @expected_email_addresses = emails.sort
@@ -175,7 +172,7 @@ module EmailSpec
       def failure_message_when_negated
         "expected #{@email.inspect} not to cc to #{@expected_email_addresses.inspect}, but it did"
       end
-      alias negative_failure_message failure_message_when_negated
+      alias_method :negative_failure_message, :failure_message_when_negated
     end
 
     def cc_to(*expected_email_addresses_or_objects_that_respond_to_email)
@@ -183,7 +180,6 @@ module EmailSpec
     end
 
     class HaveSubject
-
       def initialize(subject)
         @expected_subject = subject
       end
@@ -220,7 +216,7 @@ module EmailSpec
           "expected the subject not to match #{@expected_subject.inspect} but #{@given_subject.inspect} does match it."
         end
       end
-      alias negative_failure_message failure_message_when_negated
+      alias_method :negative_failure_message, :failure_message_when_negated
     end
 
     def have_subject(subject)
@@ -228,7 +224,6 @@ module EmailSpec
     end
 
     class IncludeEmailWithSubject
-
       def initialize(subject)
         @expected_subject = subject
       end
@@ -246,7 +241,7 @@ module EmailSpec
         if @expected_subject.is_a?(String)
           @given_emails.map(&:subject).include?(@expected_subject)
         else
-          !!(@given_emails.any?{ |mail| mail.subject =~ @expected_subject })
+          !!@given_emails.any? { |mail| mail.subject =~ @expected_subject }
         end
       end
 
@@ -265,7 +260,7 @@ module EmailSpec
           "expected no email to have a subject matching #{@expected_subject.inspect} but found at least one. Subjects were #{@given_emails.map(&:subject).inspect}"
         end
       end
-      alias negative_failure_message failure_message_when_negated
+      alias_method :negative_failure_message, :failure_message_when_negated
     end
 
     def include_email_with_subject(*emails)
@@ -273,7 +268,6 @@ module EmailSpec
     end
 
     class HaveBodyText
-
       def initialize(text)
         @expected_text = text
         @extractor = EmailSpec::Extractors::DefaultPartBody
@@ -323,7 +317,7 @@ module EmailSpec
           "expected the body not to match #{@expected_text.inspect} but #{@given_text.inspect} does match it."
         end
       end
-      alias negative_failure_message failure_message_when_negated
+      alias_method :negative_failure_message, :failure_message_when_negated
     end
 
     def have_body_text(text)
@@ -331,7 +325,6 @@ module EmailSpec
     end
 
     class HaveHeader
-
       def initialize(name, value)
         @expected_name, @expected_value = name, value
       end
@@ -351,7 +344,8 @@ module EmailSpec
           @given_header[@expected_name].to_s == @expected_value
         else
           @given_header[@expected_name].to_s =~ @expected_value
-        end      end
+        end
+      end
 
       def failure_message
         if @expected_value.is_a?(String)
@@ -368,16 +362,15 @@ module EmailSpec
           "expected the headers not to include '#{@expected_name}' with a value matching #{@expected_value.inspect} but they were #{mail_headers_hash(@given_header).inspect}"
         end
       end
-      alias negative_failure_message failure_message_when_negated
+      alias_method :negative_failure_message, :failure_message_when_negated
 
       def mail_headers_hash(email_headers)
-        email_headers.fields.inject({}) do |hash, field|
-          if field.field.class.const_defined?('FIELD_NAME')
+        email_headers.fields.each_with_object({}) do |field, hash|
+          if field.field.class.const_defined?("FIELD_NAME")
             hash[field.field.class::FIELD_NAME] = field.to_s
           else
             hash[field.field.class::NAME.downcase] = field.to_s
           end
-          hash
         end
       end
     end

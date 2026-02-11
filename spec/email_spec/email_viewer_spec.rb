@@ -1,5 +1,5 @@
-require 'spec_helper'
-require 'launchy'
+require "spec_helper"
+require "launchy"
 
 describe EmailSpec::EmailViewer do
   describe ".open_in_browser" do

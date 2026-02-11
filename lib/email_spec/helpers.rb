@@ -1,19 +1,18 @@
-require 'uri'
-require 'email_spec/deliveries'
+require "uri"
+require "email_spec/deliveries"
 
 module EmailSpec
-
   module Helpers
     include Deliveries
 
     A_TAG_BEGIN_REGEX = %r{<a[^>]*href=['"]?([^'"]*)['"]?[^>]*>\s*(?:(?!</a>).)*?\s*}
     A_TAG_END_REGEX = %r{\s*(?:(?!</a>).)*?\s*</a>}
 
-    def visit_in_email(link_text, address = '')
-      if address.nil? || address.empty?
-        email = current_email
+    def visit_in_email(link_text, address = "")
+      email = if address.nil? || address.empty?
+        current_email
       else
-        email = find_email!(address)
+        find_email!(address)
       end
       visit(parse_email_for_link(email, link_text))
     end
@@ -29,7 +28,7 @@ module EmailSpec
       visit request_uri(link)
     end
 
-    def open_email(address, opts={})
+    def open_email(address, opts = {})
       set_current_email(find_email!(address, opts))
     end
 
@@ -43,7 +42,7 @@ module EmailSpec
       set_current_email(mailbox_for(address).last)
     end
 
-    def current_email(address=nil)
+    def current_email(address = nil)
       address = convert_address(address)
       email = address ? email_spec_hash[:current_emails][address] : email_spec_hash[:current_email]
       exception_class = if defined?(RSpec)
@@ -55,8 +54,8 @@ module EmailSpec
       email
     end
 
-    def current_email_attachments(address=nil)
-      current_email(address).attachments || Array.new
+    def current_email_attachments(address = nil)
+      current_email(address).attachments || []
     end
 
     def unread_emails_for(address)
@@ -69,7 +68,7 @@ module EmailSpec
     end
 
     # Should be able to accept String or Regexp options.
-    def find_email(address, opts={})
+    def find_email(address, opts = {})
       address = convert_address(address)
       if opts[:with_subject]
         expected_subject = (opts[:with_subject].is_a?(String) ? Regexp.escape(opts[:with_subject]) : opts[:with_subject])
@@ -85,23 +84,23 @@ module EmailSpec
     end
 
     def links_in_email(email)
-      links = URI::Parser.new.extract(email.default_part_body.to_s, ['http', 'https'])
-      links.map{|url| HTMLEntities.new.decode(url) }.uniq
+      links = URI::DEFAULT_PARSER.extract(email.default_part_body.to_s, ["http", "https"])
+      links.map { |url| HTMLEntities.new.decode(url) }.uniq
     end
 
     private
 
     def email_spec_hash
-      @email_spec_hash ||= {:read_emails => {}, :unread_emails => {}, :current_emails => {}, :current_email => nil}
+      @email_spec_hash ||= {read_emails: {}, unread_emails: {}, current_emails: {}, current_email: nil}
     end
 
-    def find_email!(address, opts={})
+    def find_email!(address, opts = {})
       email = find_email(address, opts)
       if current_email_address.nil?
         raise EmailSpec::NoEmailAddressProvided, "No email address has been provided. Make sure current_email_address is returning something."
       elsif email.nil?
-        error = "#{opts.keys.first.to_s.gsub("_", " ").downcase unless opts.empty?} #{('"' + opts.values.first.to_s + '"') unless opts.empty?}"
-        raise EmailSpec::CouldNotFindEmailError, "Could not find email #{error} in the mailbox for #{current_email_address}. \n Found the following emails:\n\n #{all_emails.to_s}"
+        error = "#{opts.keys.first.to_s.tr("_", " ").downcase unless opts.empty?} #{('"' + opts.values.first.to_s + '"') unless opts.empty?}"
+        raise EmailSpec::CouldNotFindEmailError, "Could not find email #{error} in the mailbox for #{current_email_address}. \n Found the following emails:\n\n #{all_emails}"
       end
       email
     end
@@ -132,7 +131,7 @@ module EmailSpec
 
     def request_uri(link)
       return unless link
-      url = URI::parse(link)
+      url = URI.parse(link)
       url.fragment ? (url.request_uri + "#" + url.fragment) : url.request_uri
     end
 
@@ -148,8 +147,6 @@ module EmailSpec
       if textify_images(email.default_part_body) =~ %r{#{A_TAG_BEGIN_REGEX}#{link_text}#{A_TAG_END_REGEX}}
         URI.split($1)[5..-1].compact!.join("?").gsub("&amp;", "&")
         # sub correct ampersand after rails switches it (http://dev.rubyonrails.org/ticket/4002)
-      else
-        return nil
       end
     end
 
@@ -171,7 +168,7 @@ module EmailSpec
     attr_reader :last_email_address
 
     def convert_address(address)
-      @last_email_address = (address || current_email_address)
+      @last_email_address = address || current_email_address
       AddressConverter.instance.convert(@last_email_address)
     end
 
@@ -181,16 +178,14 @@ module EmailSpec
       last_email_address
     end
 
-
     def mailbox_for(address)
       super(convert_address(address)) # super resides in Deliveries
     end
 
     def email_spec_deprecate(text)
       puts ""
-      puts "DEPRECATION: #{text.split.join(' ')}"
+      puts "DEPRECATION: #{text.split.join(" ")}"
       puts ""
     end
-
   end
 end

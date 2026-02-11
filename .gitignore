@@ -18,11 +18,12 @@ bundle
 .bundle
 
 Gemfile.lock
+/gemfiles/*.lock
 
 # these are needed to remove some file copying clutter
 # that comes out of testing and is not intended to be checked in
 examples/rails_root/features/step_definitions/email_steps.rb
 examples/rails_root/vendor/plugins/email_spec
-examples/rails4_root/features/step_definitions/email_steps.rb
-examples/rails4_root/vendor/plugins/email_spec
+examples/rails_root/features/step_definitions/email_steps.rb
+examples/rails_root/vendor/plugins/email_spec
 examples/sinatra_root/features/step_definitions/email_steps.rb

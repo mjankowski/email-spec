@@ -13,8 +13,8 @@ system "gem install bundler --conservative"
 puts "== Installing lib dependencies =="
 system "bundle check || bundle install"
 
-puts "== Installing rails 4 dependencies =="
-system "bundle install --gemfile=examples/rails4_root/Gemfile"
+puts "== Installing rails dependencies =="
+system "bundle install --gemfile=examples/rails_root/Gemfile"
 
 puts "== Installing sinatra dependencies =="
 system "bundle install --gemfile=examples/sinatra_root/Gemfile"

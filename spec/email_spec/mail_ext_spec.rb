@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe EmailSpec::MailExt do
   describe "#default_part" do
@@ -27,19 +27,19 @@ describe EmailSpec::MailExt do
 
   describe "#default_part_body" do
     it "returns default_part.body" do
-      email = Mail.new(:body => "hi")
+      email = Mail.new(body: "hi")
       expect(email.default_part.body).to eq(email.default_part_body)
     end
 
     it "compatible with ActiveSupport::SafeBuffer" do
-      email = Mail.new(:body => ActiveSupport::SafeBuffer.new("bacon &amp; pancake"))
-      expect(email.default_part_body).to eq ("bacon & pancake")
+      email = Mail.new(body: ActiveSupport::SafeBuffer.new("bacon &amp; pancake"))
+      expect(email.default_part_body).to eq("bacon & pancake")
     end
 
     it "decodes parts before return" do
-      email = Mail.new(:body => "hello\r\nquoted-printable")
-      email.content_transfer_encoding = 'quoted-printable'
-      
+      email = Mail.new(body: "hello\r\nquoted-printable")
+      email.content_transfer_encoding = "quoted-printable"
+
       expect(email.encoded).to include("hello\r\nquoted-printable=")
       expect(email.default_part_body).to eq("hello\nquoted-printable")
     end

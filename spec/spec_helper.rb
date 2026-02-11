@@ -1,7 +1,7 @@
-require 'rubygems'
-require 'action_mailer'
-require 'mail'
-require File.expand_path(File.dirname(__FILE__) + '/../lib/email_spec.rb')
+require "rubygems"
+require "action_mailer"
+require "mail"
+require File.expand_path(File.dirname(__FILE__) + "/../lib/email_spec.rb")
 
 RSpec.configure do |config|
   config.include EmailSpec::Helpers

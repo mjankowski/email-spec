@@ -8,7 +8,7 @@ module EmailSpec
       end
 
       def call
-        part_body ? HTMLEntities.new.decode(part_body) : ''
+        part_body ? HTMLEntities.new.decode(part_body) : ""
       end
 
       private
@@ -30,7 +30,7 @@ module EmailSpec
       private
 
       def part_body
-        mail.html_part ? mail.html_part.body : nil
+        mail.html_part&.body
       end
     end
 
@@ -38,7 +38,7 @@ module EmailSpec
       private
 
       def part_body
-        mail.text_part ? mail.text_part.body : nil
+        mail.text_part&.body
       end
     end
   end
