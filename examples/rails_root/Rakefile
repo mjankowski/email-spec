@@ -8,4 +8,4 @@ require "rake/testtask"
 require "rdoc/task"
 require "delayed/tasks"
 
-RailsApp::Application.load_tasks
+RailsRoot::Application.load_tasks

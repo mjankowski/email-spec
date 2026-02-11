@@ -1,4 +1,4 @@
-RailsApp::Application.routes.draw do
+RailsRoot::Application.routes.draw do
   root to: "welcome#index"
   get "/confirm" => "welcome#confirm", :as => :confirm_account
   get "/newsletter" => "welcome#newsletter", :as => :request_newsletter

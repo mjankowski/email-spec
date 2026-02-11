@@ -2,5 +2,5 @@
 require File.expand_path("../application", __FILE__)
 
 # Initialize the rails application
-RailsApp::Application.initialize!
+RailsRoot::Application.initialize!
 ActionMailer::Base.default_url_options = {host: "example.com"}
